@@ -1,0 +1,1 @@
+[{"branch": "feature-1", "intent": "major", "file": "internal.yml"}, {"branch": "feature-1", "intent": "minor", "file": "external.yml"}]
