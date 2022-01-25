@@ -97,11 +97,13 @@ if external_intent != None:
     latest_release_version = get_version_from_branch('./release', 'external.yml')
     target_branch_version = get_version_from_branch('./' + target_branch, 'external.yml')
     next_version_external = compute_version(external_intent, latest_release_version, target_branch_version)
+    print(latest_release_version, target_branch_version, external_intent, next_version_external)
 
 if internal_intent != None:
     latest_release_version = get_version_from_branch('./release', 'internal.yml')
     target_branch_version = get_version_from_branch('./' + target_branch, 'internal.yml')
     next_version_internal = compute_version(internal_intent, latest_release_version, target_branch_version)
+    print(latest_release_version, target_branch_version, internal_intent, next_version_internal)
 
 # Accumulate intents
 intents_obj = None
