@@ -25,6 +25,7 @@ jobs:
       - name: Compute Version
         id: semver
         run: |
+          python ./.github/bump-version.py $GITHUB_REF
           export var=$(python ./.github/bump-version.py $GITHUB_REF)
           vars=($var)
           echo "::set-output name=INTERNALVERSION::${vars[0]}"
