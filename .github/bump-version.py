@@ -130,7 +130,7 @@ intents_file.truncate()
 shutil.rmtree(release_path)
 shutil.rmtree(target_path)
 
-print(next_version_internal, 'internal.yml', next_version_external, 'external.yml')
+print(next_version_internal, 'internal.yml', next_version_external, 'external.yml', internal_intent, external_intent)
 
 try:
     repo = git.Repo('.')
