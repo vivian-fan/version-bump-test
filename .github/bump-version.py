@@ -78,7 +78,7 @@ os.mkdir(target_path)
 clone_repo_target = None
 clone_repo_release = None
 
-clone_repo_target = git.Repo.clone_from('https://github.com/vivian-fan/version-bump-poc.git', target_path, branch=target_branch)
+clone_repo_target = git.Repo.clone_from('https://github.com/vivian-fan/version-bump-test.git', target_path, branch=target_branch)
 
 release_branches = []
 
@@ -87,7 +87,7 @@ for branch in clone_repo_target.refs:
         release_branches.append(branch.__str__())
 release_branches.sort()
 latest_release_branch = release_branches[-1].replace('origin/', '')
-clone_repo_release = git.Repo.clone_from('https://github.com/vivian-fan/version-bump-poc.git', release_path, branch=latest_release_branch)
+clone_repo_release = git.Repo.clone_from('https://github.com/vivian-fan/version-bump-test.git', release_path, branch=latest_release_branch)
 
 # Compute next version
 next_version_external = None
