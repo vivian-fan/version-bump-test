@@ -27,20 +27,38 @@ jobs:
         run: |
           export var=$(python ./.github/bump-version.py $GITHUB_REF)
           vars=($var)
-          echo "::set-output name=VERSION::${vars[0]}"
-          echo "::set-output name=FILE::${vars[1]}"
+          echo "::set-output name=INTERNALVERSION::${vars[0]}"
+          echo "::set-output name=INTERNAL::${vars[1]}"
+          echo "::set-output name=EXTERNALVERSION::${vars[2]}"
+          echo "::set-output name=EXTERNAL::${vars[3]}"
           echo "::set-output name=BRANCH::$GITHUB_REF"
         
-      - name: Update Version for File
+      - name: Update Version for Internal
+        if: ${{steps.semver.outputs.INTERNALVERSION}} != None
         uses: fjogeleit/yaml-update-action@master
         with:
-          valueFile: ${{steps.semver.outputs.FILE}}
+          valueFile: ${{steps.semver.outputs.INTERNAL}}
           propertyPath: info.version
-          value: ${{steps.semver.outputs.VERSION}}
+          value: ${{steps.semver.outputs.INTERNALVERSION}}
           commitChange: true
           updateFile: true
           targetBranch: ${{steps.semver.outputs.BRANCH}}
           masterBranchName: master
           createPR: false
           branch:  ${{steps.semver.outputs.BRANCH}}
-          message: Bump version to ${{steps.semver.outputs.VERSION}} in ${{steps.semver.outputs.FILE}}
+          message: Bump version to ${{steps.semver.outputs.INTERNALVERSION}} in ${{steps.semver.outputs.INTERNAL}}
+
+      - name: Update Version for External
+        if: ${{steps.semver.outputs.EXTERNALVERSION}} != None
+        uses: fjogeleit/yaml-update-action@master
+        with:
+          valueFile: ${{steps.semver.outputs.EXTERNAL}}
+          propertyPath: info.version
+          value: ${{steps.semver.outputs.EXTERNALVERSION}}
+          commitChange: true
+          updateFile: true
+          targetBranch: ${{steps.semver.outputs.BRANCH}}
+          masterBranchName: master
+          createPR: false
+          branch:  ${{steps.semver.outputs.BRANCH}}
+          message: Bump version to ${{steps.semver.outputs.EXTERNALVERSION}} in ${{steps.semver.outputs.EXTERNAL}}
