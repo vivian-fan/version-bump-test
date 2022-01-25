@@ -6,10 +6,11 @@ import yaml
 import git
 from json.decoder import JSONDecodeError
 
-def get_intent_object():
-    f = open('./intent.json')
-    intent_obj = json.load(f)
-    return intent_obj
+def get_intent_list():
+    with open('./intent.txt', 'r') as data_file:
+        json_data = data_file.read()
+    data = json.loads(json_data)
+    return data
 
 def get_version_from_branch(branch_name, spec_file_name):
     spec_content = {}
@@ -30,8 +31,6 @@ def is_less_than(version1, version2):
     version2 = version2.replace('.', '')
     return version1 < version2
 
-    resi/y
-
 def compute_version(intent, latest_release_version, target_branch_version):
     next_version = None
     if intent == 'minor':
@@ -44,7 +43,25 @@ def compute_version(intent, latest_release_version, target_branch_version):
 
 # Clone master and latest_release branch from remote
 target_branch = str(sys.argv[1])
-intent_obj = get_intent_object()
+
+intent_list = get_intent_list()
+
+internal_intent = None
+external_intent = None
+
+for intent in intent_list:
+    if intent['file'] == 'internal.yml':
+        if internal_intent == None:
+            internal_intent = intent['intent']
+        else:
+            if intent['intent'] == 'major':
+                internal_intent = intent['intent']
+    else:
+        if external_intent == None:
+            external_intent = intent['intent']
+        else:
+            if intent['intent'] == 'major':
+                external_intent = intent['intent']
 
 release_path = './release'
 target_path = './' + target_branch
@@ -73,10 +90,18 @@ latest_release_branch = release_branches[-1].replace('origin/', '')
 clone_repo_release = git.Repo.clone_from('https://github.com/vivian-fan/version-bump-poc.git', release_path, branch=latest_release_branch)
 
 # Compute next version
-intent = intent_obj['intent']
-latest_release_version = get_version_from_branch('./release', intent_obj['file'])
-target_branch_version = get_version_from_branch('./' + target_branch, intent_obj['file'])
-next_version = compute_version(intent, latest_release_version, target_branch_version)
+next_version_external = None
+next_version_internal = None
+
+if external_intent != None:
+    latest_release_version = get_version_from_branch('./release', 'external.yml')
+    target_branch_version = get_version_from_branch('./' + target_branch, 'external.yml')
+    next_version_external = compute_version(external_intent, latest_release_version, target_branch_version)
+
+if internal_intent != None:
+    latest_release_version = get_version_from_branch('./release', 'internal.yml')
+    target_branch_version = get_version_from_branch('./' + target_branch, 'internal.yml')
+    next_version_internal = compute_version(internal_intent, latest_release_version, target_branch_version)
 
 # Accumulate intents
 intents_obj = None
@@ -93,10 +118,11 @@ if intents_obj == None:
         "internal":[],
         "external":[]
     }
-if intent_obj['file'] == 'internal.yml':
-    intents_obj["internal"].append(intent_obj)
-else:
-    intents_obj["external"].append(intent_obj)
+for intent in intent_list:
+    if intent['file'] == 'internal.yml':
+        intents_obj["internal"].append(intent)
+    else:
+        intents_obj["external"].append(intent)
 intents_file.seek(0)
 json.dump(intents_obj, intents_file)
 intents_file.truncate()
@@ -104,7 +130,7 @@ intents_file.truncate()
 shutil.rmtree(release_path)
 shutil.rmtree(target_path)
 
-print(next_version, intent_obj['file'])
+print(next_version_internal, 'internal.yml', next_version_external, 'external.yml')
 
 try:
     repo = git.Repo('.')
