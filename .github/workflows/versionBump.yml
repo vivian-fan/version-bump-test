@@ -1,0 +1,46 @@
+name: Version Bump Automation
+
+on:
+  pull_request:
+    branches: [ master, develop ]
+    types: [ closed ]
+
+jobs:
+  version-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Python3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: |
+          chmod +x ./.github/intall-py-dependecies.sh
+          ./.github/intall-py-dependecies.sh
+          
+      - name: Compute Version
+        id: semver
+        run: |
+          export var=$(python ./.github/bump-version.py $GITHUB_REF)
+          vars=($var)
+          echo "::set-output name=VERSION::${vars[0]}"
+          echo "::set-output name=FILE::${vars[1]}"
+          echo "::set-output name=BRANCH::$GITHUB_REF"
+        
+      - name: Update Version for File
+        uses: fjogeleit/yaml-update-action@master
+        with:
+          valueFile: ${{steps.semver.outputs.FILE}}
+          propertyPath: info.version
+          value: ${{steps.semver.outputs.VERSION}}
+          commitChange: true
+          updateFile: true
+          targetBranch: ${{steps.semver.outputs.BRANCH}}
+          masterBranchName: master
+          createPR: false
+          branch:  ${{steps.semver.outputs.BRANCH}}
+          message: Bump version to ${{steps.semver.outputs.VERSION}} in ${{steps.semver.outputs.FILE}}
