@@ -36,32 +36,32 @@ jobs:
           echo "::set-output name=INTERNALINTENT::${vars[5]}"
           echo "::set-output name=BRANCH::$GITHUB_REF"
         
-      - name: Update Version for Internal
-        if: ${{steps.semver.outputs.INTERNALVERSION}} != None
-        uses: fjogeleit/yaml-update-action@master
-        with:
-          valueFile: ${{steps.semver.outputs.INTERNAL}}
-          propertyPath: info.version
-          value: ${{steps.semver.outputs.INTERNALVERSION}}
-          commitChange: true
-          updateFile: true
-          targetBranch: ${{steps.semver.outputs.BRANCH}}
-          masterBranchName: master
-          createPR: false
-          branch:  ${{steps.semver.outputs.BRANCH}}
-          message: Bump version to ${{steps.semver.outputs.INTERNALVERSION}} in ${{steps.semver.outputs.INTERNAL}} with intent ${{steps.semver.outputs.INTERNALINTENT}} 
+#       - name: Update Version for Internal
+#         if: ${{steps.semver.outputs.INTERNALVERSION}} != None
+#         uses: fjogeleit/yaml-update-action@master
+#         with:
+#           valueFile: ${{steps.semver.outputs.INTERNAL}}
+#           propertyPath: info.version
+#           value: ${{steps.semver.outputs.INTERNALVERSION}}
+#           commitChange: true
+#           updateFile: true
+#           targetBranch: ${{steps.semver.outputs.BRANCH}}
+#           masterBranchName: master
+#           createPR: false
+#           branch:  ${{steps.semver.outputs.BRANCH}}
+#           message: Bump version to ${{steps.semver.outputs.INTERNALVERSION}} in ${{steps.semver.outputs.INTERNAL}} with intent ${{steps.semver.outputs.INTERNALINTENT}} 
 
-      - name: Update Version for External
-        if: ${{steps.semver.outputs.EXTERNALVERSION}} != None
-        uses: fjogeleit/yaml-update-action@master
-        with:
-          valueFile: ${{steps.semver.outputs.EXTERNAL}}
-          propertyPath: info.version
-          value: ${{steps.semver.outputs.EXTERNALVERSION}}
-          commitChange: true
-          updateFile: true
-          targetBranch: ${{steps.semver.outputs.BRANCH}}
-          masterBranchName: master
-          createPR: false
-          branch:  ${{steps.semver.outputs.BRANCH}}
-          message: Bump version to ${{steps.semver.outputs.EXTERNALVERSION}} in ${{steps.semver.outputs.EXTERNAL}} with intent ${{steps.semver.outputs.EXTERNALINTENT}} 
+#       - name: Update Version for External
+#         if: ${{steps.semver.outputs.EXTERNALVERSION}} != None
+#         uses: fjogeleit/yaml-update-action@master
+#         with:
+#           valueFile: ${{steps.semver.outputs.EXTERNAL}}
+#           propertyPath: info.version
+#           value: ${{steps.semver.outputs.EXTERNALVERSION}}
+#           commitChange: true
+#           updateFile: true
+#           targetBranch: ${{steps.semver.outputs.BRANCH}}
+#           masterBranchName: master
+#           createPR: false
+#           branch:  ${{steps.semver.outputs.BRANCH}}
+#           message: Bump version to ${{steps.semver.outputs.EXTERNALVERSION}} in ${{steps.semver.outputs.EXTERNAL}} with intent ${{steps.semver.outputs.EXTERNALINTENT}} 
